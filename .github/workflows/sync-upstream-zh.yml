@@ -1,0 +1,69 @@
+name: sync upstream and localize (zh)
+
+# The fork's default branch holds only this automation. Every run resets the
+# `zh` branch to the upstream tree, applies zh-kit/localize_zh.py and pushes it.
+# The car's source is that branch: github JackieZ123430/mgu-store, branch:zh.
+#
+# Upstream is read over plain git/HTTPS (github.com/<repo>.git/info/refs), files
+# from raw.githubusercontent.com, archives from codeload.github.com — the
+# updater does not need api.github.com for a branch source.
+
+on:
+  schedule:
+    - cron: "23 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream-zh
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Reset the zh branch to the upstream tree
+        run: |
+          set -euo pipefail
+          git config user.name "zh-sync"
+          git config user.email "zh-sync@users.noreply.github.com"
+          git remote add upstream https://github.com/robertnisipeanu/mgu-store.git
+          git fetch --no-tags upstream main
+          git checkout -B zh FETCH_HEAD
+          git checkout "${{ github.sha }}" -- zh-kit
+
+      - name: Apply the Chinese layer
+        run: python3 zh-kit/localize_zh.py
+
+      # build.js writes src/locales.js from locales/*.json, so it runs before the
+      # locale check (the order release.json uses too).
+      - name: Build the source package the way the unit does
+        run: |
+          set -euo pipefail
+          cd apps/robertn_store
+          node tools/build.js
+
+      - name: Check the locale tables
+        run: |
+          set -euo pipefail
+          cd apps/robertn_store
+          node tools/test_i18n.js
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git add -A
+          if git diff --cached --quiet; then
+            echo "upstream unchanged; nothing to push"
+            exit 0
+          fi
+          version=$(python3 -c "import json;print(json.load(open('apps/robertn_store/mgu-app.json'))['version'])")
+          git commit -m "zh: robertn_store@${version}"
+          git push --force origin zh
