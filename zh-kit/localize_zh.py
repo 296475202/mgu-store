@@ -27,7 +27,7 @@ import re
 import sys
 
 FORCED_HMI_LANGUAGE = "CHINESISCH_SIMPLE"
-CREDIT = "汉化：抖音 小白科技杂物社 / BiliBili 小白151 / GitHub JackieZ123430"
+CREDIT = "Translation by: LEON HAU"
 KIT = pathlib.Path(__file__).resolve().parent
 
 
