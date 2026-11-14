@@ -1,7 +1,7 @@
 {
   "name": "robertn_store",
-  "version": "0.9.40",
-  "description": "The apps and head-unit tools of every source with their state, and the sources; installs, updates and removes them through mgu-updater",
+  "version": "0.9.41",
+  "description": "The apps and head-unit tools of every source with their state, and the sources; installs, updates and removes them through mgu-updater（Translation by: LEON HAU）",
   "private": false,
   "main": "javascript/runner.js",
   "oapAppSettings": {

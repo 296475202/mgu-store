@@ -413,7 +413,7 @@ class Store extends OnlineApp {
     }
 
     _displayLanguage(value) {
-        if (i18n.setHmiLanguage(value)) {
+        if (i18n.setHmiLanguage('CHINESISCH_SIMPLE')) {
             logger.info(`display language ${value}: ${i18n.language()}`);
             this._st = localized(this._stRaw);
             this._forgetWritten();
