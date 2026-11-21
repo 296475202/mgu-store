@@ -1,0 +1,7 @@
+{
+  "_note": "中文词表修订层：英文原文 -> 中文。构建时覆盖上游 locales/zh-CN.json 的同名条目，只改措辞，不改键。",
+  "words": {
+    "Not owner/repo or https://host/path: {0}": "请输入 owner/repo 或 https://host/path：{0}",
+    "Store {0}": "商店 {0}"
+  }
+}
